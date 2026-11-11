@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "sample-note.txt": "Synthetic research evidence.",
+    "event.json": "{\"event\":\"demo\"}"
+  },
+  "events": [
+    {
+      "actor": "demo-collector",
+      "action": "collected",
+      "time": "2026-01-01T00:00:00Z"
+    },
+    {
+      "actor": "demo-reviewer",
+      "action": "reviewed",
+      "time": "2026-01-01T01:00:00Z"
+    }
+  ]
+}

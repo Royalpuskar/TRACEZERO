@@ -1,0 +1,30 @@
+{
+  "manifest": {
+    "event.json": "8602197b29e8beb03c824754b6310f4284b57789323d15b7e4487ef5687eb2c4",
+    "sample-note.txt": "c53707aa84088659902c518b1dac27a662eb179878ef0b17b56fa5bcff2aeca3"
+  },
+  "changed": [],
+  "missing": [],
+  "unexpected": [],
+  "chain_valid": true,
+  "custody_chain": [
+    {
+      "event": {
+        "actor": "demo-collector",
+        "action": "collected",
+        "time": "2026-01-01T00:00:00Z"
+      },
+      "previous": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "e220ac892b64719583cf8ce2bf55bf616e7bb5aac231a290a980b151ccc788fc"
+    },
+    {
+      "event": {
+        "actor": "demo-reviewer",
+        "action": "reviewed",
+        "time": "2026-01-01T01:00:00Z"
+      },
+      "previous": "e220ac892b64719583cf8ce2bf55bf616e7bb5aac231a290a980b151ccc788fc",
+      "hash": "745536e840e8fa84356abace424980e54b92d872fa6b0d794abb6e0d14a3c312"
+    }
+  ]
+}

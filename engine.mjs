@@ -1,0 +1,9 @@
+const hex=b=>Array.from(b,x=>x.toString(16).padStart(2,'0')).join('');
+const sha=async s=>{if(typeof s!=='string')throw Error('Artifact content must be text');return hex(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s))));};
+const canonical=v=>Array.isArray(v)?'['+v.map(canonical).join(',')+']':v&&typeof v==='object'?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}':JSON.stringify(v);
+export async function analyze(d){
+if(!d||typeof d!=='object'||Array.isArray(d))throw Error('Input must be a JSON object');
+const raw=JSON.stringify(d);if(raw.length>100000)throw Error('Scenario exceeds 100 KB limit');
+function inspect(v,depth=0){if(depth>15)throw Error('Input nesting exceeds 15 levels');if(Array.isArray(v)&&v.length>1000)throw Error('Maximum 1000 items per array');if(v&&typeof v==='object'){for(const [k,x] of Object.entries(v)){if(['__proto__','constructor','prototype'].includes(k))throw Error('Reserved input key');inspect(x,depth+1);}}if(typeof v==='number'&&!Number.isFinite(v))throw Error('Numbers must be finite');}inspect(d);
+const actual={};for(const path of Object.keys(d.artifacts||{}).sort())actual[path]=await sha(d.artifacts[path]);const expected=d.manifest||actual;async function chain(events){let previous='0'.repeat(64),result=[];for(const event of events){const payload={event,previous};const hash=await sha(canonical(payload));result.push({...payload,hash});previous=hash;}return result;}const valid=d.custody_chain===undefined||canonical(d.custody_chain)===canonical(await chain(d.custody_chain.map(r=>r.event)));return{manifest:actual,changed:Object.keys(expected).filter(p=>p in actual&&actual[p]!==expected[p]).sort(),missing:Object.keys(expected).filter(p=>!(p in actual)).sort(),unexpected:Object.keys(actual).filter(p=>!(p in expected)).sort(),chain_valid:valid,custody_chain:await chain(d.events||[])};
+}
